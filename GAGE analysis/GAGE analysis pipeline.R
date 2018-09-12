@@ -1,7 +1,7 @@
 ### GAGE Pathway Analysis -- Andrew R Gross -- 2018-08-17
 ### Application of the GAGE pathway analysis pipeline
 ### This analysis is downstream of the DESeq2 Pipeline
-### INPUT: Differential Expression table
+### INPUT: Differential Expression table with ENTREZ IDs
 ### OUTPUT: Predicted pathways tables, predicted pathways bar graphs
 
 ####################################################################################################################################################
