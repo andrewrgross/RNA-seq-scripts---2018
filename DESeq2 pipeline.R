@@ -128,11 +128,12 @@ pvalue.cutoff <- 0.05
 ### Keep p-adjusted
 results.als <- round.DESeq.results(results.als)[-c(3,4,5)]
 results.ko <- round.DESeq.results(results.ko)[-c(3,4,5)]
+
 ### Keep raw p-value
 results.als <- round.DESeq.results(results.als)[-c(3,4,6)]
 #results.ko <- round.DESeq.results(results.ko)[-c(3,4,6)]
 
-### Keep p-adjusted
+### Apply cutoff
 results.als <- results.als[results.als$padj <= pvalue.cutoff,]
 results.ko <- results.ko[results.ko$padj <= pvalue.cutoff,]
 
@@ -154,7 +155,7 @@ results.ko <- results.ko[order(results.ko$pvalue),]
 ### Apply cutoffs
 summary(counts.als)
 counts.cutoff = 1
-results.als <- results.als[results.als$basemean >= counts.cutoff]
+results.als <- results.als[results.als$basemean >= counts.cutoff,]
 
 #summary(counts.ko)
 #counts.cutoff = 1
@@ -182,7 +183,7 @@ results.ko <- add.description(results.ko)
 getwd()
 setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis of CHCHD10/Input files/")
 
-#write.csv(results.als, 'DEGs - ALS 0.05 pv.csv')
+write.csv(results.als, 'DEGs - ALS 0.05 pv.csv')
 #write.csv(results.ko, 'DEGs - KO 0.05 pv.csv')
 write.csv(results.als, 'DEGs - ALS 0.05 padj.csv')
 write.csv(results.ko, 'DEGs - KO 0.05 padj.csv')

@@ -6,7 +6,9 @@
 
 ####################################################################################################################################################
 ### Header
-library(gage)
+library(GSEABase)
+library(hgu95av2.db)
+library(GO.db)
 library(ggplot2)
 
 ####################################################################################################################################################
@@ -20,11 +22,40 @@ setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis
 results.als.ez <- read.csv('DEGs - ALS 0.05 padj ENTREZ.csv', row.names= 1)
 results.ko.ez <- read.csv('DEGs - KO 0.05 padj ENTREZ.csv', row.names = 1)
 
-results.als.ez <- read.csv('DEGs - ALS 0.05 pv.csv', row.names= 1)
+results.als.ez <- read.csv('DEGs - ALS 0.05 pv ENTREZ.csv', row.names= 1)
 results.ko.ez <- read.csv('DEGs - KO 0.05 pv ENTREZ.csv', row.names = 1)
 
 ####################################################################################################################################################
 ### Formatting
+
+
+head(results.als.ez)
+
+####################################################################################################################################################
+### Rank lists
+
+
+
+####################################################################################################################################################
+### Output
+
+setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis of CHCHD10/GSEA/Input to GSEA/")
+
+write.csv()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #results.als.ez <- results.als.ez[results.als.ez$padj<0.05,]
 for.gage.als <- as.matrix(results.als.ez[c(4,5,6,7,8,9,10,11)])
 
