@@ -12,11 +12,28 @@ library(GO.db)
 library(ggplot2)
 
 ####################################################################################################################################################
+### Functions
+convertIDs <- function(dataframe) {
+  ensemblIDs <- c()
+  gene.names <- c()
+  for (rowName in row.names(dataframe)) {
+    ensemblID <- strsplit(rowName,"\\.")[[1]][1]
+    gene.name <- strsplit(rowName,"\\_")[[1]][2]
+    ensemblIDs <- c(ensemblIDs,ensemblID)
+    gene.names <- c(gene.names, gene.name)
+  }
+  row.names(dataframe)<-ensemblIDs
+  dataframe$NAME <- gene.names
+  return(dataframe)
+}
+
+####################################################################################################################################################
 ### Input
 data(gse16873)
 data(kegg.gs)
 data(go.gs)
 
+### Differential Expression Results
 setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis of CHCHD10/Input files/")
 
 results.als.ez <- read.csv('DEGs - ALS 0.05 padj ENTREZ.csv', row.names= 1)
@@ -25,30 +42,91 @@ results.ko.ez <- read.csv('DEGs - KO 0.05 padj ENTREZ.csv', row.names = 1)
 results.als.ez <- read.csv('DEGs - ALS 0.05 pv ENTREZ.csv', row.names= 1)
 results.ko.ez <- read.csv('DEGs - KO 0.05 pv ENTREZ.csv', row.names = 1)
 
+### Full expression tables
+setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/RNAseq Data/Motor Neurons/")
+results.als <- read.csv('E099 - PM - ALS v CTRL/PM-5119--07--02--2018_TPM.csv', row.names = 1)
+
+
+setwd('C:/Users/grossar/Box/Sareen Lab Shared/Data/RNAseq Data/Motor Neurons/')
+tpm.als <- read.csv('E099 - PM - ALS v CTRL/PM-5119--07--02--2018_TPM.csv', row.names = 1)
+names(tpm.als) <- c('02iCTR','03iCTR','159iALS','172iCTR','372iALS_n1','372iALS_n2','372iALS_n3','395iCTR')
+
+tpm.ko <- read.csv('E0x - PP - D10 KO v CTRL/TPM.csv', row.names = 1)
+names(tpm.ko) <- read.csv('E0x - PP - D10 KO v CTRL/Sample names.txt', header = FALSE)[,1]
+
 ####################################################################################################################################################
 ### Formatting
+### Reorder columns
+tpm.als <- tpm.als[c(1,2,4,8,5,6,7,3)]
+#head(results.als.ez)
 
+####################################################################################################################################################
+### Subsetting
+### Remove universally low scoring genes
 
-head(results.als.ez)
+row.max <- apply(tpm.als,1,max)
+#row.is.zero <- row.max==0
+#quantile(row.max,c(0.1,0.2,0.3))
+#tpm.als <- tpm.als[row.max>0,]
+(cutoff = quantile(row.max,0.5))
+rows.to.keep <- row.max > cutoff
+tpm.als <- tpm.als[rows.to.keep,]
+nrow(tpm.als)
+summary(tpm.als)
+
+### Renaming
+test <- convertIDs(tpm.als)
+
+test$DESCRIPTION <- NA
+output <- test[c(9,10,1:8)]
+
+### Generate Phenotype file
+phenotype <- c('CTR','CTR','CTR','CTR','ALS','ALS','ALS','ALS')
+phenotype.text <- '8\t2\t1\n#CTR\tALS\n0 0 0 0 1 1 1 1'
+
+### KNOCKOUT
+
+row.max <- apply(tpm.ko,1,max)
+#row.is.zero <- row.max==0
+#quantile(row.max,c(0.1,0.2,0.3))
+#tpm.als <- tpm.als[row.max>0,]
+(cutoff = quantile(row.max,0.5))
+rows.to.keep <- row.max > cutoff
+tpm.ko <- tpm.ko[rows.to.keep,]
+nrow(tpm.ko)
+summary(tpm.ko)
+
+### Renaming
+test <- convertIDs(tpm.ko)
+
+test$DESCRIPTION <- NA
+output.ko <- test[c(7,8,1:6)]
+
+### Generate Phenotype file
+
+phenotype.text.ko <- '6\t2\t1\n#KO\tCTR\n0 0 0 0 1 1 1 1'
 
 ####################################################################################################################################################
 ### Rank lists
 
-
+output.deg.ko <- results.ko.ez[c(10,3)]
+output.deg.ko$logpvalue <- -log(output.deg.ko$pvalue)
+output.deg.ko <- output.deg.ko[c(1,3)]
 
 ####################################################################################################################################################
 ### Output
 
 setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis of CHCHD10/GSEA/Input to GSEA/")
 
-write.csv()
+write.table(output, 'ALS expression data.txt', row.names = FALSE, sep = '\t', quote = FALSE)
+write.table(phenotype.text, 'ALS phenotype.cls', col.names = FALSE, quote = FALSE, row.names = FALSE)
 
 
+write.table(output.ko, 'KO expression data.txt', row.names = FALSE, sep = '\t', quote = FALSE)
+write.table(phenotype.text.ko, 'KO phenotype.cls', col.names = FALSE, quote = FALSE, row.names = FALSE)
 
 
-
-
-
+write.table(output.deg.ko, 'KO deg ranked list.rnk', row.names = FALSE, sep = '\t', quote = FALSE)
 
 
 

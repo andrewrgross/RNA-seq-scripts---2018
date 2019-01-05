@@ -4,23 +4,26 @@
 ### INPUT: Expression data; differential expression data is typical
 ### OUTPUT: Boxplot figures
 
+####################################################################
 ### Header
 library(ggplot2)
 
+####################################################################
 ### Input
 
 setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/Prasanthi/")
+#setwd("C:/Users/grossar/Box/Sareen Lab Shared/Data/RNAseq Data/HT neurons and tissue/")
 
 de.data <- read.csv("ALS DiffEx prelim data - Aug 14.csv", row.names = 1)
-
+ht.data <- read.csv("Full processed data for GEO-HT RNAseq.csv", header=TRUE, row.names = 1)
 de.data <- results.als
+
+####################################################################
 ### Format
 
 ### Break gene name into column
 test <- row.names(head(de.data))
-
 row.names.split <- strsplit(row.names(de.data), "_")
-
 test.split <- strsplit(test, "_")
 
 #for (item in test.split[1]) {
@@ -43,6 +46,36 @@ for (item.num in 1:length(row.names.split)) {
 de.data <- cbind(de.data,gene.names)
 row.names(de.data) <- ensembl.id
 
+### Subset
+ht.data <- ht.data[c(1,15:33)]
+
+(gene.pos <- grep('GAPDH',ht.data$Gene))
+ht.data.gapdh <- ht.data[gene.pos,]
+ht.data.gapdh <- add.description(ht.data.gapdh, 'ensembl_gene_id')
+
+
+gene.name <- "CRH"
+(gene.pos <- grep(gene.name,ht.data$Gene))
+ht.data.crh <- ht.data[gene.pos,]
+ht.data.crh <- add.description(ht.data.crh, 'ensembl_gene_id')
+
+gene.name <- "GHRH"
+(gene.pos <- grep(gene.name,ht.data$Gene))
+ht.data.ghrh <- ht.data[gene.pos,]
+ht.data.ghrh <- add.description(ht.data.ghrh, 'ensembl_gene_id')
+
+gene.name <- "POMC"
+(gene.pos <- grep(gene.name,ht.data$Gene))
+ht.data.name <- ht.data[gene.pos,]
+(ht.data.name <- add.description(ht.data.name, 'ensembl_gene_id'))
+ht.data.out <- rbind(ht.data.out, ht.data.name)
+
+### Join data sets
+
+ht.data.out <- rbind(ht.data.gapdh[2,], ht.data.crh, ht.data.ghrh)
+write.csv(ht.data.out,'HT RNA-seq expr - genes of interest.csv')
+
+####################################################################
 ### Plot
 setwd('C:/Users/grossar/Box/Sareen Lab Shared/Data/Andrew/E099 - RNAseq analysis of CHCHD10/DEG analyses/')
 row.num.pos = 10
