@@ -78,16 +78,9 @@ setwd('C:/Users/grossar/Box/Sareen Lab Shared/Data/RNAseq Data/Motor Neurons/E09
 tpm.als <- read.csv('PM-5119--07--02--2018_TPM.csv', row.names = 1)
 sample.names.als <- c('02iCTR','03iCTR','159iALS','172iCTR','372iALS_n1','372iALS_n2','372iALS_n3','395iCTR')
 
-
 setwd('C:/Users/grossar/Box/Sareen Lab Shared/Data/RNAseq Data/Motor Neurons/E0x - PP - D10 KO v CTRL/')
 tpm.ko <- read.csv('TPM.csv', row.names = 1)
 sample.names.ko <- read.csv('Sample names.txt', header = FALSE)[,1]
-
-
-
-
-
-
 
 ############################################################################################
 ### Format
@@ -176,7 +169,7 @@ ggbiplot(pca.als, var.axes = FALSE, labels = rownames(pca.als$x))
 ##############################################
 ### Find the slope and magnitude of all loadings
 loadings <- data.frame(l.score.pc1, l.score.pc2)
-loadings <- loadings*100
+  loadings <- loadings*100
 loadings$slope = loadings[,2]/loadings[,1]
 loadings$degree = atan(loadings$slope)*180/pi
 loadings$magnitude = abs((loadings[,1]^2+loadings[,2]^2)^0.5)
